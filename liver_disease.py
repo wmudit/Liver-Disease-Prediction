@@ -5,7 +5,6 @@ import pandas as pd
 
 # Importing the dataset
 dataset = pd.read_csv('liver_patients.csv')
-66
 #Filling null values with mean values
 dataset["Albumin_and_Globulin_Ratio"] = dataset.Albumin_and_Globulin_Ratio.fillna(dataset['Albumin_and_Globulin_Ratio'].mean())
 #dataset.isnull().sum()
