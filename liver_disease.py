@@ -13,7 +13,8 @@ X = dataset.iloc[:, 0:10].values
 y = dataset.iloc[:, 10:].values
 
 for value in y:
-    value -= 1
+    if value == 2:
+        value -= 2
 
 #Encoding Categorical Variable
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
@@ -70,7 +71,7 @@ classifier.fit(X_train, y_train, batch_size = 10, epochs = 100)
 
 # Predicting the Test set results
 y_pred = classifier.predict(X_test)
-#y_pred = (y_pred > 0.5)
+#y_pred = (y_pred > 0.6)
 
 # Making the Confusion Matrix
 from sklearn.metrics import confusion_matrix
@@ -86,10 +87,13 @@ def build_classifier():
     classifier.add(Dense(units = 6, kernel_initializer = 'uniform', activation = 'relu', input_dim = 10))
     classifier.add(Dense(units = 6, kernel_initializer = 'uniform', activation = 'relu'))
     classifier.add(Dense(units = 1, kernel_initializer = 'uniform', activation = 'sigmoid'))
-    classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
+    classifier.compile(optimizer = 'rmsprop', loss = 'binary_crossentropy', metrics = ['accuracy'])
     return classifier
-classifier = KerasClassifier(build_fn = build_classifier, batch_size = 10, epochs = 100)
+classifier = KerasClassifier(build_fn = build_classifier, batch_size = 32, epochs = 250)
 accuracies = cross_val_score(estimator = classifier, X = X_train, y = y_train, cv = 10)
+#classifier.fit(X_train, y_train)
+#y_predict = classifier.predict(X_test)
+#c_matrix = confusion_matrix(y_test, y_predict)
 mean = accuracies.mean()
 variance = accuracies.std()
 
@@ -106,8 +110,8 @@ def build_classifier(optimizer):
     classifier.compile(optimizer = optimizer , loss = 'binary_crossentropy', metrics = ['accuracy'])
     return classifier
 classifier = KerasClassifier(build_fn = build_classifier)
-parameters = {'batch_size': [25, 32],
-              'epochs': [100, 500],
+parameters = {'batch_size': [10, 25, 32],
+              'epochs': [100, 250],
               'optimizer': ['adam', 'rmsprop']}
 grid_search = GridSearchCV(estimator = classifier,
                            param_grid = parameters,
